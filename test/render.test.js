@@ -14,7 +14,7 @@ test("team shortcuts render", () => {
 test("colour shortcuts produce coloured spans and plain \\textcolor still works", () => {
   const html = render("\\ql{q_{k,a}} + \\good{+M} - \\bad{\\lambda_1} + \\note{N\\lambda_1} + \\textcolor{red}{x}");
   assert.match(html, /color:#84179E/i);
-  assert.match(html, /color:#1F845A/i);
+  assert.match(html, /color:#22A06B/i);
   assert.match(html, /color:#C9372C/i);
   assert.match(html, /color:#626F86/i);
   assert.match(html, /color:red/i);
