@@ -1,6 +1,6 @@
 # Privacy Policy — Qlerate LaTeX for Confluence
 
-Effective date: 14 September 2026. Publisher: Qlerate (privacy contact: avi@qlerate.com).
+Effective date: 14 September 2026. Publisher: Qlerate (privacy contact: support@qlerate.com).
 
 ## Summary
 
@@ -56,4 +56,4 @@ Changes to this policy are published in the repository above with the effective 
 
 ## Contact
 
-Questions about this policy: avi@qlerate.com.
+Questions about this policy: support@qlerate.com.
