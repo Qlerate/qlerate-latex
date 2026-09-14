@@ -38,7 +38,8 @@ Copy the exact `extensionId` from any page where the macro was inserted once by 
 
 ## Jira
 
-The same app adds a **LaTeX** panel to every Jira issue. It reads the issue's description and comments
+The same app adds a **LaTeX** panel to the right-hand column of every Jira issue (an issue context
+module, so it appears without anyone adding it). It reads the issue's description and comments
 with the viewer's own permissions and typesets every formula it finds: `$…$` and `\(…\)` inline,
 `$$…$$` and `\[…\]` display, and code blocks whose language is `latex` or `tex`. Money amounts such as
 `$5` are ignored. The panel needs the `read:jira-work` scope, which the site admin approves at install.

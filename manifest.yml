@@ -29,14 +29,14 @@ modules:
         openOnInsert: true
       adfExport:
         function: export
-  jira:issuePanel:
-    - key: latex-issue-panel
+  jira:issueContext:
+    - key: latex-issue-context
       resource: jira-panel
       resolver:
         function: resolver
       title: LaTeX
+      label: Formulas in this issue
       icon: resource:jira-panel;icon.svg
-      viewportSize: medium
   function:
     - key: export
       handler: export.handler
