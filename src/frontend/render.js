@@ -16,6 +16,11 @@ export const KATEX_OPTIONS = {
     "\\E": "\\mathbb{E}",
     "\\argmax": "\\operatorname{arg\\,max}",
     "\\argmin": "\\operatorname{arg\\,min}",
+    // Colour shortcuts (KaTeX also accepts \textcolor{red}{…}, \textcolor{#84179E}{…}, \colorbox, \fcolorbox).
+    "\\ql": "\\textcolor{#84179E}{#1}",      // Qlerate purple: the quantity being defined or emphasised
+    "\\good": "\\textcolor{#1F845A}{#1}",    // green: rewards, gains, things that should be large
+    "\\bad": "\\textcolor{#C9372C}{#1}",     // red: penalties, losses, things that should be small
+    "\\note": "\\textcolor{#626F86}{#1}",    // grey: auxiliary terms and constants
   },
 };
 
