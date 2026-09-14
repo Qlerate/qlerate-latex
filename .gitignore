@@ -1,0 +1,6 @@
+node_modules/
+static/main/bundle.js
+static/config/bundle.js
+static/main/katex/
+static/config/katex/
+.forge/

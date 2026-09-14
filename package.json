@@ -1,0 +1,21 @@
+{
+  "name": "qlerate-latex",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Qlerate LaTeX: free, open-source LaTeX formulas for Confluence Cloud, a Forge macro that typesets TeX with KaTeX in the page and exports the source to PDF/Word.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.js",
+    "lint": "forge lint",
+    "deploy": "npm run build && forge deploy",
+    "install:site": "forge install --product confluence"
+  },
+  "dependencies": {
+    "@forge/bridge": "^7.0.0",
+    "katex": "^0.18.7"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
