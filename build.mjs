@@ -11,6 +11,7 @@ const katexDist = join(root, "node_modules", "katex", "dist");
 for (const [entry, outdir] of [
   ["src/frontend/main.js", "static/main"],
   ["src/frontend/config.js", "static/config"],
+  ["src/frontend/jira.js", "static/jira-panel"],
 ]) {
   const out = join(root, outdir);
   mkdirSync(out, { recursive: true });

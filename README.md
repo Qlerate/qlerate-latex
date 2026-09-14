@@ -36,6 +36,14 @@ Programmatic insertion (for example from an Atlassian MCP connector or the REST 
 `{ "tex": "...", "mode": "auto|display|inline", "size": "small|normal|large" }`.
 Copy the exact `extensionId` from any page where the macro was inserted once by hand.
 
+## Jira
+
+The same app adds a **LaTeX** panel to every Jira issue. It reads the issue's description and comments
+with the viewer's own permissions and typesets every formula it finds: `$…$` and `\(…\)` inline,
+`$$…$$` and `\[…\]` display, and code blocks whose language is `latex` or `tex`. Money amounts such as
+`$5` are ignored. The panel needs the `read:jira-work` scope, which the site admin approves at install.
+Install on Jira with the same installation link, product Jira.
+
 ## Layout
 
 | Path | Role |

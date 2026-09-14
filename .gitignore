@@ -3,4 +3,6 @@ static/main/bundle.js
 static/config/bundle.js
 static/main/katex/
 static/config/katex/
+static/jira-panel/bundle.js
+static/jira-panel/katex/
 .forge/

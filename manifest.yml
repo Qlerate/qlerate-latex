@@ -29,15 +29,29 @@ modules:
         openOnInsert: true
       adfExport:
         function: export
+  jira:issuePanel:
+    - key: latex-issue-panel
+      resource: jira-panel
+      resolver:
+        function: resolver
+      title: LaTeX
+      icon: resource:jira-panel;icon.svg
+      viewportSize: medium
   function:
     - key: export
       handler: export.handler
+    - key: resolver
+      handler: resolver.handler
 resources:
   - key: main
     path: static/main
   - key: config
     path: static/config
+  - key: jira-panel
+    path: static/jira-panel
 permissions:
+  scopes:
+    - read:jira-work
   content:
     styles:
       - unsafe-inline
