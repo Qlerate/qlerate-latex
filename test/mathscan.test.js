@@ -67,3 +67,27 @@ test("handles a maximum-size run of unmatched display openers", () => {
   assert.deepEqual(result.formulas, []);
   assert.equal(result.truncated, false);
 });
+
+test("one description mixing inline, display, money and a latex code block", () => {
+  const t = (s) => ({ type: "text", text: s });
+  const p = (s) => ({ type: "paragraph", content: [t(s)] });
+  const adf = {
+    type: "doc",
+    content: [
+      p("Inline: the threshold is $\\theta = -105\\,\\mathrm{dBm}$ and the scale is $\\sigma = 1/20$."),
+      p("Display: $$E(\\mathbf x) = -\\sum_{i}\\big(a_i + b_i\\big)x_i + \\lambda\\Big(\\sum_i x_i - 1\\Big)^2$$"),
+      p("Money that must be ignored: it costs $0 and saves $5."),
+      { type: "codeBlock", attrs: { language: "latex" }, content: [t("q_i=\\frac{1}{|S|}\\sum_{s\\in S}\\ell_i(s)")] },
+    ],
+  };
+  const f = findFormulas(adfToText(adf));
+  assert.deepEqual(
+    f.map((x) => [x.tex, x.display]),
+    [
+      ["\\theta = -105\\,\\mathrm{dBm}", false],
+      ["\\sigma = 1/20", false],
+      ["E(\\mathbf x) = -\\sum_{i}\\big(a_i + b_i\\big)x_i + \\lambda\\Big(\\sum_i x_i - 1\\Big)^2", true],
+      ["q_i=\\frac{1}{|S|}\\sum_{s\\in S}\\ell_i(s)", true],
+    ],
+  );
+});
