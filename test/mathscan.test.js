@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { adfToText, findFormulas } from "../src/frontend/mathscan.js";
+import { adfToText, findFormulas, scanFormulas } from "../src/frontend/mathscan.js";
 
 test("finds display and inline formulas in document order", () => {
   const f = findFormulas("Energy $E(x)=\\sum_i Q_{ii}x_i$ and the gap $$\\Delta L < 0.1$$ done.");
@@ -36,4 +36,34 @@ test("ADF code blocks in latex become display formulas; other blocks flatten to 
   assert.match(text, /RSRP threshold \$\\theta=-105\$/);
   const f = findFormulas(text);
   assert.deepEqual(f.map((x) => [x.tex, x.display]), [["\\theta=-105", false], ["\\frac{P}{12R}", true]]);
+});
+
+test("preserves delimiter priority, order, escaping and deduplication", () => {
+  const f = findFormulas("escaped \\$x$; $$a $ b$$; \\(c\\); \\[d\\]; and \\(c\\) again");
+  assert.deepEqual(f.map((x) => [x.tex, x.display]), [
+    ["a $ b", true],
+    ["c", false],
+    ["d", true],
+  ]);
+});
+
+test("bounds source length and formula count and reports truncation", () => {
+  const chars = scanFormulas("$a$ after", { maxChars: 3 });
+  assert.equal(chars.truncated, true);
+  assert.deepEqual(chars.formulas.map((x) => x.tex), ["a"]);
+
+  const formulas = scanFormulas("$a$ $b$ $c$", { maxFormulas: 2 });
+  assert.equal(formulas.truncated, true);
+  assert.deepEqual(formulas.formulas.map((x) => x.tex), ["a", "b"]);
+});
+
+test("legacy findFormulas helper remains unbounded", () => {
+  const text = `${"plain ".repeat(6_000)}$late$`;
+  assert.deepEqual(findFormulas(text).map((x) => x.tex), ["late"]);
+});
+
+test("handles a maximum-size run of unmatched display openers", () => {
+  const result = scanFormulas("\\[".repeat(16_383));
+  assert.deepEqual(result.formulas, []);
+  assert.equal(result.truncated, false);
 });
