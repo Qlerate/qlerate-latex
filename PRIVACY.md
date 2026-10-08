@@ -1,12 +1,13 @@
-# Privacy Policy — Qlerate LaTeX for Confluence
+# Privacy Policy — Qlerate LaTeX for Confluence and Jira
 
-Effective date: 14 September 2026. Publisher: Qlerate (privacy contact: support@qlerate.com).
+Effective date: 8 October 2026. Publisher: Qlerate (privacy contact: support@qlerate.com).
 
 ## Summary
 
-Qlerate LaTeX typesets LaTeX formulas inside Confluence Cloud pages. It runs entirely on Atlassian's
-Forge platform and in the reader's browser. It does not collect, transmit, store or sell any personal
-data, and it makes no network calls to any server outside Atlassian.
+Qlerate LaTeX typesets LaTeX formulas inside Confluence Cloud pages and in a Jira Cloud issue panel.
+It runs on Atlassian's Forge platform and in the reader's browser. It processes the Atlassian content
+described below only to render formulas. It does not retain or sell that content and makes no network
+calls to any server outside Atlassian.
 
 ## What the app processes
 
@@ -17,6 +18,10 @@ data, and it makes no network calls to any server outside Atlassian.
   Forge context (site, page and macro identifiers, the viewer's Atlassian account id, locale, theme).
   The app reads the macro configuration and theme from it and discards the rest. Nothing is logged
   or retained.
+- **Jira issue content.** When a viewer opens the Jira panel, the app uses that viewer's existing Jira
+  permissions to request the issue key, summary, description, comments, comment-author display names
+  and comment creation dates from Jira. It scans that content for formulas and uses author names and
+  dates as labels in the panel. Processing is transient in the panel; the app does not store or log it.
 
 ## What the app does not do
 
@@ -24,9 +29,10 @@ data, and it makes no network calls to any server outside Atlassian.
   The app declares no external fetch, script, style, font or frame permissions in its manifest.
 - No storage. The app uses no Forge storage, database or cache.
 - No analytics, telemetry, cookies or tracking of any kind.
-- No access to page content beyond the macro's own configuration. The app requests no Confluence
-  content scopes.
-- No sharing or selling of data. There is no data to share.
+- No access to Confluence page content beyond the macro's own configuration. The app requests no
+  Confluence content scopes. Its `read:jira-work` scope is used only for the Jira issue content above.
+- No sharing or selling of data. Processed content remains within Atlassian's platform and the viewer's
+  browser session.
 
 ## Exports
 
@@ -36,9 +42,9 @@ returns a text rendering of it. It keeps no record of the call.
 
 ## Data location and retention
 
-All data lives where Confluence stores your pages. The app itself retains nothing, so there is nothing
-for the app to delete; removing a macro or a page removes the formula with it. Uninstalling the app
-leaves your pages intact with the formula source still stored in them.
+Source content remains where Confluence stores pages and Jira stores issues. The app itself retains
+nothing, so there is no app-owned content to delete. Removing content in Confluence or Jira removes it
+from future rendering. Uninstalling the app does not delete the source content stored by Atlassian.
 
 ## Security
 
@@ -48,7 +54,7 @@ designation (no egress), and renders with `trust: false` so LaTeX input cannot i
 
 ## Children
 
-The app is a productivity tool for Confluence users and is not directed at children.
+The app is a productivity tool for Confluence and Jira users and is not directed at children.
 
 ## Changes
 

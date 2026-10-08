@@ -5,25 +5,33 @@ export const DEFAULTS = { tex: "", mode: "auto", size: "normal" };
 
 // KaTeX options: no HTML injection (trust: false), errors surfaced to the author,
 // a few macros that appear constantly in engineering notes.
-export const KATEX_OPTIONS = {
+const CANONICAL_MACROS = Object.freeze({
+  "\\dB": "\\,\\mathrm{dB}",
+  "\\dBm": "\\,\\mathrm{dBm}",
+  "\\R": "\\mathbb{R}",
+  "\\E": "\\mathbb{E}",
+  "\\argmax": "\\operatorname{arg\\,max}",
+  "\\argmin": "\\operatorname{arg\\,min}",
+  // Colour shortcuts (KaTeX also accepts \textcolor{red}{…}, \textcolor{#84179E}{…}, \colorbox, \fcolorbox).
+  // String macros in the options object take no arguments, so these are function macros.
+  "\\ql": colorMacro("#84179E"),   // Qlerate purple: the quantity being defined or emphasised
+  "\\good": colorMacro("#22A06B"), // green: rewards, gains, things that should be large
+  "\\bad": colorMacro("#C9372C"),  // red: penalties, losses, things that should be small
+  "\\note": colorMacro("#626F86"), // grey: auxiliary terms and constants
+});
+
+export const KATEX_OPTIONS = Object.freeze({
   throwOnError: true,
   strict: "ignore",
   trust: false,
-  macros: {
-    "\\dB": "\\,\\mathrm{dB}",
-    "\\dBm": "\\,\\mathrm{dBm}",
-    "\\R": "\\mathbb{R}",
-    "\\E": "\\mathbb{E}",
-    "\\argmax": "\\operatorname{arg\\,max}",
-    "\\argmin": "\\operatorname{arg\\,min}",
-    // Colour shortcuts (KaTeX also accepts \textcolor{red}{…}, \textcolor{#84179E}{…}, \colorbox, \fcolorbox).
-    // String macros in the options object take no arguments, so these are function macros.
-    "\\ql": colorMacro("#84179E"),   // Qlerate purple: the quantity being defined or emphasised
-    "\\good": colorMacro("#22A06B"), // green: rewards, gains, things that should be large
-    "\\bad": colorMacro("#C9372C"),  // red: penalties, losses, things that should be small
-    "\\note": colorMacro("#626F86"), // grey: auxiliary terms and constants
-  },
-};
+  maxSize: 100,
+  macros: CANONICAL_MACROS,
+});
+
+/** KaTeX mutates its macro map for global definitions, so every formula gets an isolated copy. */
+export function createKatexOptions(extra = {}) {
+  return { ...KATEX_OPTIONS, ...extra, macros: { ...CANONICAL_MACROS, ...(extra.macros || {}) } };
+}
 
 /** A one-argument macro expanding to \textcolor{hex}{argument}. */
 function colorMacro(hex) {
@@ -51,7 +59,7 @@ export function renderInto(el, tex, { inline, size }) {
     return null;
   }
   try {
-    katex.render(source, el, { ...KATEX_OPTIONS, displayMode: !inline });
+    katex.render(source, el, createKatexOptions({ displayMode: !inline }));
     return null;
   } catch (e) {
     el.className = "error";

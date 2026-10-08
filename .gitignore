@@ -6,3 +6,4 @@ static/config/katex/
 static/jira-panel/bundle.js
 static/jira-panel/katex/
 .forge/
+release-evidence.json

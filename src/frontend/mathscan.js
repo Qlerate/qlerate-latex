@@ -26,32 +26,81 @@ export function adfToText(node) {
  */
 export function findFormulas(text) {
   const src = String(text || "");
-  const found = [];
-  const take = (re, display) => {
-    for (const m of src.matchAll(re)) {
-      const tex = m[1].trim();
-      if (tex) found.push({ tex, display, index: m.index, length: m[0].length });
-    }
-  };
-  take(/\$\$([\s\S]+?)\$\$/g, true);
-  take(/\\\[([\s\S]+?)\\\]/g, true);
-  take(/\\\(([\s\S]+?)\\\)/g, false);
-  // Single-dollar inline: no space right after the opening or before the closing dollar, no digit right
-  // after the opening dollar (money), and no line break inside.
-  take(/(?<![\\$])\$(?![\s\d$])([^$\n]+?)(?<![\s\\])\$(?!\d)/g, false);
+  return scanFormulas(src, { maxChars: src.length, maxFormulas: Number.MAX_SAFE_INTEGER }).formulas;
+}
 
-  // Drop inline matches that fall inside a display match, then order and dedupe.
-  const spans = found.filter((f) => f.display);
-  const inside = (f) => spans.some((s) => s !== f && f.index >= s.index && f.index + f.length <= s.index + s.length);
+export const SCAN_LIMITS = Object.freeze({ maxChars: 32_767, maxFormulas: 100 });
+
+/** Linear, bounded formula scan. The detailed result lets callers disclose truncation. */
+export function scanFormulas(text, limits = {}) {
+  const maxChars = nonNegativeLimit(limits.maxChars, SCAN_LIMITS.maxChars);
+  const maxFormulas = nonNegativeLimit(limits.maxFormulas, SCAN_LIMITS.maxFormulas);
+  const input = String(text || "");
+  const src = input.slice(0, maxChars);
+  const found = [];
+  const lastClose = {
+    "$$": src.lastIndexOf("$$"),
+    "\\]": src.lastIndexOf("\\]"),
+    "\\)": src.lastIndexOf("\\)"),
+    "$": src.lastIndexOf("$"),
+  };
+
+  let i = 0;
+  for (; i < src.length && found.length < maxFormulas;) {
+    let opener = null;
+    if (src.startsWith("$$", i)) opener = { open: "$$", close: "$$", display: true };
+    else if (src.startsWith("\\[", i)) opener = { open: "\\[", close: "\\]", display: true };
+    else if (src.startsWith("\\(", i)) opener = { open: "\\(", close: "\\)", display: false };
+    else if (isInlineDollarOpen(src, i)) opener = { open: "$", close: "$", display: false };
+
+    if (!opener) {
+      i += 1;
+      continue;
+    }
+
+    const bodyStart = i + opener.open.length;
+    const end = findClose(src, bodyStart, opener.close, lastClose[opener.close]);
+    if (end < 0 || (opener.close === "$" && !isInlineDollarClose(src, end))) {
+      i += opener.open.length;
+      continue;
+    }
+    const tex = src.slice(bodyStart, end).trim();
+    if (tex) found.push({ tex, display: opener.display, index: i });
+    i = end + opener.close.length;
+  }
+
   const seen = new Set();
-  return found
-    .filter((f) => !inside(f))
-    .sort((a, b) => a.index - b.index)
-    .filter((f) => {
+  const formulas = found.filter((f) => {
       const k = `${f.display ? "D" : "I"}:${f.tex}`;
       if (seen.has(k)) return false;
       seen.add(k);
       return true;
-    })
-    .map(({ tex, display, index }) => ({ tex, display, index }));
+    });
+  return {
+    formulas,
+    truncated: input.length > src.length || (found.length >= maxFormulas && i < src.length),
+    scannedChars: src.length,
+  };
+}
+
+function findClose(src, from, close, lastClose) {
+  if (lastClose < from) return -1;
+  const end = src.indexOf(close, from);
+  if (close === "$" && end >= 0 && src.slice(from, end).includes("\n")) return -1;
+  return end;
+}
+
+function isInlineDollarOpen(src, i) {
+  return src[i] === "$"
+    && src[i - 1] !== "\\"
+    && src[i - 1] !== "$"
+    && !/[\s\d$]/.test(src[i + 1] || "");
+}
+
+function isInlineDollarClose(src, i) {
+  return !/[\s\\]/.test(src[i - 1] || "") && !/\d/.test(src[i + 1] || "");
+}
+
+function nonNegativeLimit(value, fallback) {
+  return Number.isFinite(value) ? Math.max(0, Math.floor(value)) : fallback;
 }
