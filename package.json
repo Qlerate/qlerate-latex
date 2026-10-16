@@ -11,6 +11,7 @@
     "lint": "node scripts/forge.mjs lint",
     "deploy": "npm run build && node scripts/forge.mjs deploy",
     "install:site": "node scripts/forge.mjs install --product confluence",
+    "bench:scan": "node scripts/scan-bench.mjs",
     "release:check": "npm test && npm run build && npm run lint && node scripts/release-evidence.mjs"
   },
   "dependencies": {
